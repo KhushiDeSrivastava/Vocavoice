@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VocaVoice — Voice Vocabulary Coach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f6f7fb;color:#171923}
+.wrap{max-width:900px;margin:auto;padding:28px 18px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.logo{font-size:23px;font-weight:800}.logo b{color:#5b5ce2}.badge{font-size:12px;font-weight:700;color:#5b5ce2;background:#ececff;padding:7px 11px;border-radius:20px}
+.hero{background:linear-gradient(135deg,#5b5ce2,#765fe7);color:white;border-radius:24px;padding:30px;display:grid;grid-template-columns:1.35fr .65fr;gap:20px;box-shadow:0 12px 35px #4546a220}
+.hero h1{font-size:39px;line-height:1.05;margin:12px 0}.hero p{line-height:1.55;opacity:.92}
+.voice{text-align:center;background:#ffffff18;border:1px solid #ffffff30;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:center}
+.mic{width:78px;height:78px;border:0;border-radius:50%;background:white;color:#5b5ce2;font-size:31px;cursor:pointer;margin:auto}.mic.on{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 0 12px #ffffff22}}
+#status{font-size:13px;margin-top:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.card{background:white;border:1px solid #e5e7ef;border-radius:20px;padding:21px}.card h2{font-size:17px;margin:0 0 15px}
+.word{font-size:35px;font-weight:800;margin:5px 0}.muted{color:#697386;line-height:1.5}.example{background:#f7f7fa;border-radius:12px;padding:12px;margin-top:14px;font-size:14px;line-height:1.5}
+button.btn{border:1px solid #e1e3eb;background:white;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:700}.primary{background:#5b5ce2!important;color:white;border-color:#5b5ce2!important}
+.actions{display:flex;gap:9px;margin-top:15px}.options{display:grid;gap:9px}.option{text-align:left;padding:12px;border:1px solid #e1e3eb;background:white;border-radius:11px;cursor:pointer}.correct{background:#edf9f4!important;border-color:#16835b!important}.wrong{background:#fff1f1!important;border-color:#d44!important}
+.barbg{height:8px;background:#eceef4;border-radius:9px}.bar{height:100%;width:40%;background:#5b5ce2;border-radius:9px}.history{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee;font-size:14px}.master{font-size:11px;color:#16835b;font-weight:800}
+footer{text-align:center;color:#697386;font-size:12px;margin:24px}
+@media(max-width:700px){.hero,.grid{grid-template-columns:1fr}.hero h1{font-size:32px}}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div class="logo">Voca<b>Voice</b></div><div class="badge">AI Vocabulary Coach</div></div>
+<section class="hero"><div><div class="badge" style="background:#ffffff22;color:white">VOICE-FIRST LEARNING</div>
+<h1>Learn words by speaking.</h1><p>Tap the microphone, practise a word, hear its pronunciation, and test your recall in under a minute.</p></div>
+<div class="voice"><button class="mic" id="mic">🎙️</button><div id="status">Tap to start speaking</div></div></section>
+
+<div class="grid">
+<div class="card"><h2>Today's word</h2><div class="word" id="word">Ephemeral</div>
+<div class="muted" id="meaning">Lasting for a very short time; temporary.</div>
+<div class="example" id="example">“The beauty of the sunset was ephemeral.”</div>
+<div class="actions"><button class="btn primary" id="hear">🔊 Hear it</button><button class="btn" id="next">Next word →</button></div></div>
+
+<div class="card"><h2>Quick practice</h2><div class="muted" style="font-size:14px;margin-bottom:12px">Which sentence uses <b id="qword">ephemeral</b> correctly?</div>
+<div class="options"><button class="option" data-ok="1">The rainbow was ephemeral and disappeared quickly.</button>
+<button class="option">She bought an ephemeral laptop for five years.</button>
+<button class="option">He was ephemeral because he arrived early.</button></div>
+<div id="feedback" style="margin-top:12px;font-size:13px;font-weight:700"></div></div>
+
+<div class="card"><h2>Learning progress</h2><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span>Words mastered</span><b id="score">8 / 20</b></div><div class="barbg"><div class="bar" id="bar"></div></div><p class="muted" style="font-size:13px">Combines listening, speaking and recall instead of memorising definitions alone.</p></div>
+
+<div class="card"><h2>Recent words</h2><div class="history"><span>Ubiquitous</span><span class="master">MASTERED</span></div><div class="history"><span>Meticulous</span><span class="master">MASTERED</span></div><div class="history"><span>Ephemeral</span><span style="color:#5b5ce2;font-weight:800;font-size:11px">LEARNING</span></div></div>
+</div><footer>Prototype for a voice-first vocabulary learning experience</footer></div>
+
+<script>
+const words=[
+["Ephemeral","Lasting for a very short time; temporary.","“The beauty of the sunset was ephemeral.”"],
+["Ubiquitous","Present, appearing, or found everywhere.","“Smartphones are ubiquitous in modern life.”"],
+["Meticulous","Very careful and precise about details.","“She was meticulous when checking the report.”"],
+["Resilient","Able to recover quickly from difficulty.","“The resilient team bounced back after the setback.”"]];
+let i=0,mastered=8;
+const $=id=>document.getElementById(id);
+$("next").onclick=()=>{i=(i+1)%words.length;update();reset()};
+function update(){let x=words[i];$("word").textContent=x[0];$("meaning").textContent=x[1];$("example").textContent=x[2];$("qword").textContent=x[0].toLowerCase()}
+$("hear").onclick=()=>{if(window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance($("word").textContent))}};
+function reset(){document.querySelectorAll(".option").forEach(x=>x.className="option");$("feedback").textContent=""}
+document.querySelectorAll(".option").forEach(x=>x.onclick=()=>{document.querySelectorAll(".option").forEach(y=>y.className="option");if(x.dataset.ok){x.classList.add("correct");$("feedback").textContent="✓ Correct! Great recall."; $("feedback").style.color="#16835b";if(mastered<20){mastered++;$("score").textContent=mastered+" / 20";$("bar").style.width=(mastered/20*100)+"%"}}else{x.classList.add("wrong");$("feedback").textContent="Not quite — think about the meaning."; $("feedback").style.color="#c33"}});
+
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let r,listening=false;
+if(SR){r=new SR();r.lang="en-US";r.interimResults=false;r.onstart=()=>{listening=true;$("mic").classList.add("on");$("status").textContent="Listening… say a word"};r.onresult=e=>{let t=e.results[0][0].transcript; $("status").textContent='Heard: "'+t+'"';let n=words.findIndex(x=>t.toLowerCase().includes(x[0].toLowerCase()));if(n>=0){i=n;update();reset()}else $("status").textContent='Heard: "'+t+'". Try one of the words shown.'};r.onerror=()=>$("status").textContent="Couldn’t hear that — try again.";r.onend=()=>{$("mic").classList.remove("on");listening=false};$("mic").onclick=()=>listening?r.stop():r.start()}
+else $("mic").onclick=()=>$("status").textContent="Voice input needs a browser with speech recognition (Chrome recommended).";
+</script></body></html>
